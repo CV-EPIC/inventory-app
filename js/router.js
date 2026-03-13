@@ -60,6 +60,7 @@ loadPage("dashboard")
 }
 
 startApp()
+console.log("APP START");
 
 /* ============================
    TOP BAR
