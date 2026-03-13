@@ -27,8 +27,6 @@ document.getElementById("content").innerHTML = html
 
 lucide.createIcons()
 
-setActiveMenu(page)
-
 }
 
 /* ============================
@@ -37,13 +35,15 @@ setActiveMenu(page)
 
 async function startApp(){
 
-await loadSidebar();
+await loadSidebar()
 
-await loadTopbar();
+await loadTopbar()
 
-loadPage("dashboard");
+loadPage("dashboard")
 
 }
+
+startApp()
 
 /* ============================
    TOP BAR
