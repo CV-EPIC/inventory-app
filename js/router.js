@@ -20,12 +20,28 @@ lucide.createIcons();
 
 async function loadPage(page){
 
-const res = await fetch("pages/" + page + ".html")
-const html = await res.text()
+try{
 
-document.getElementById("content").innerHTML = html
+const res = await fetch("pages/" + page + ".html");
 
-lucide.createIcons()
+if(!res.ok){
+throw new Error("Page not found");
+}
+
+const html = await res.text();
+
+document.getElementById("content").innerHTML = html;
+
+lucide.createIcons();
+
+setActiveMenu(page);
+
+}catch(err){
+
+document.getElementById("content").innerHTML =
+"<h2 style='padding:20px'>Page tidak ditemukan</h2>";
+
+}
 
 }
 
