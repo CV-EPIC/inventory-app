@@ -1,0 +1,39 @@
+.kpi-card{
+
+background:white;
+
+border-radius:12px;
+
+padding:20px;
+
+border:1px solid var(--border);
+
+transition:all 0.2s;
+
+}
+
+.kpi-card:hover{
+
+transform:translateY(-3px);
+
+box-shadow:0 10px 20px rgba(0,0,0,0.05);
+
+}
+
+.kpi-card .title{
+
+font-size:13px;
+
+color:#6b7280;
+
+}
+
+.kpi-card .value{
+
+font-size:28px;
+
+font-weight:bold;
+
+margin-top:5px;
+
+}
