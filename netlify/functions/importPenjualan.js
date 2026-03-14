@@ -2,11 +2,20 @@ const { Client } = require("pg");
 
 exports.handler = async (event) => {
 
-const data = JSON.parse(event.body);
+let data = [];
+
+try {
+  data = JSON.parse(event.body || "[]");
+} catch {
+  return {
+    statusCode: 400,
+    body: JSON.stringify({ error: "Invalid JSON" })
+  };
+}
 
 const client = new Client({
 connectionString: process.env.DATABASE_URL,
-ssl: { rejectUnauthorized: false }
+ssl:{rejectUnauthorized:false}
 });
 
 await client.connect();
@@ -23,9 +32,9 @@ VALUES ($1,$2,$3,$4,$5)`,
 
 await client.end();
 
-return {
-statusCode: 200,
-body: JSON.stringify({message:"Import berhasil"})
+return{
+statusCode:200,
+body:JSON.stringify({message:"Import berhasil"})
 };
 
 };
