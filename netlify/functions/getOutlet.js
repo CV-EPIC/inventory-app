@@ -10,7 +10,7 @@ ssl: { rejectUnauthorized: false }
 await client.connect();
 
 const result = await client.query(
-"SELECT * FROM barang ORDER BY nama"
+"SELECT * FROM outlet ORDER BY nama"
 );
 
 await client.end();
