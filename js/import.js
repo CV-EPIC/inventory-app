@@ -17,13 +17,13 @@ const rows = e.target.result
 .filter(r => r.trim() !== "");
 
 const data = rows.map(r=>{
-const c = r.split(",");
+const c = r.split(",").map(v => v.trim());
 
 return{
 tanggal:c[0],
 no_po:c[1],
 outlet:c[2],
-sku:c[3],
+sku:c[5],        // SKU ada di kolom ke 6
 qty:parseInt(c[4])
 }
 

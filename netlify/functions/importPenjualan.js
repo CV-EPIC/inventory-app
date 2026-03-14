@@ -35,7 +35,7 @@ await client.query(
 `INSERT INTO penjualan (tanggal,no_po,outlet,sku,qty)
 VALUES ($1,$2,$3,$4,$5)`,
 [
-row.tanggal,
+new Date(row.tanggal),
 row.no_po,
 row.outlet,
 row.sku,
@@ -44,6 +44,7 @@ parseInt(row.qty) || 0
 );
 
 }
+
 
 await client.end();
 
