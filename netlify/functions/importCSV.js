@@ -40,7 +40,9 @@ await client.connect();
 try{
 
 for(const row of data){
-
+if(row.qty <= 0){
+ continue;
+}
  const keys = Object.keys(row);
  const values = Object.values(row);
 

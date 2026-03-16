@@ -1,8 +1,8 @@
 async function loadDashboard(){
 
-const totalProduk = document.getElementById("totalProduk");
+const el = document.getElementById("totalProduk");
 
-if(!totalProduk){
+if(!el){
  return; // jika bukan halaman dashboard
 }
 
