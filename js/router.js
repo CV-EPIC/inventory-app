@@ -31,7 +31,13 @@ throw new Error("Page not found");
 const html = await res.text();
 
 document.getElementById("content").innerHTML = html;
+if(page === "dashboard"){
+ loadDashboard();
+}
 
+if(page === "persediaan"){
+ loadPersediaan();
+}
 lucide.createIcons();
 
 setActiveMenu(page);
