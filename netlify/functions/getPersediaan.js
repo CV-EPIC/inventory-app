@@ -3,13 +3,11 @@ import { Client } from "pg";
 exports.handler = async () => {
 
 const client = new Client({
- connectionString: process.env.DATABASE_URL,
- ssl:{ rejectUnauthorized:false }
+ connectionString:process.env.DATABASE_URL,
+ ssl:{rejectUnauthorized:false}
 });
 
 await client.connect();
-
-try{
 
 const result = await client.query(`
 SELECT
@@ -17,20 +15,20 @@ b.sku,
 b.nama_produk,
 b.stok_awal,
 
-COALESCE(SUM(pb.qty),0) AS stok_masuk,
-COALESCE(SUM(pj.qty),0) AS stok_keluar,
+COALESCE(SUM(pb.qty),0) as stok_masuk,
+COALESCE(SUM(pj.qty),0) as stok_keluar,
 
 b.stok_awal
 + COALESCE(SUM(pb.qty),0)
-- COALESCE(SUM(pj.qty),0) AS stok
+- COALESCE(SUM(pj.qty),0) as stok
 
 FROM barang b
 
 LEFT JOIN pembelian pb
-ON pb.sku = b.sku
+ON pb.sku=b.sku
 
 LEFT JOIN penjualan pj
-ON pj.sku = b.sku
+ON pj.sku=b.sku
 
 GROUP BY
 b.sku,
@@ -45,15 +43,6 @@ await client.end();
 return{
  statusCode:200,
  body:JSON.stringify(result.rows)
-};
-
-}catch(err){
-
-return{
- statusCode:500,
- body:JSON.stringify({error:err.message})
-};
-
 }
 
 };

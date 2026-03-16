@@ -16,14 +16,14 @@ try{
 }catch(err){
  return{
   statusCode:400,
-  body:JSON.stringify({error:"Format JSON tidak valid"})
+  body:JSON.stringify({error:"JSON tidak valid"})
  }
 }
 
 const table = body.table;
 const data = body.data;
 
-if(!data || data.length === 0){
+if(!data || data.length===0){
  return{
   statusCode:400,
   body:JSON.stringify({error:"data kosong"})
@@ -31,8 +31,8 @@ if(!data || data.length === 0){
 }
 
 const client = new Client({
- connectionString: process.env.DATABASE_URL,
- ssl:{ rejectUnauthorized:false }
+ connectionString:process.env.DATABASE_URL,
+ ssl:{rejectUnauthorized:false}
 });
 
 await client.connect();
@@ -40,20 +40,18 @@ await client.connect();
 try{
 
 for(const row of data){
-if(row.qty <= 0){
- continue;
-}
- const keys = Object.keys(row);
- const values = Object.values(row);
 
- const params = keys.map((_,i)=>"$"+(i+1));
+const keys=Object.keys(row);
+const values=Object.values(row);
 
- const query = `
- INSERT INTO ${table} (${keys.join(",")})
- VALUES (${params.join(",")})
- `;
+const params=keys.map((_,i)=>"$"+(i+1));
 
- await client.query(query,values);
+const query=`
+INSERT INTO ${table} (${keys.join(",")})
+VALUES (${params.join(",")})
+`;
+
+await client.query(query,values);
 
 }
 
