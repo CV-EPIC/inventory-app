@@ -2,7 +2,23 @@ import { Client } from "pg";
 
 exports.handler = async (event) => {
 
-const body = JSON.parse(event.body);
+if(!event.body){
+ return {
+  statusCode:200,
+  body:"ImportCSV function ready"
+ };
+}
+
+let body;
+
+try{
+ body = JSON.parse(event.body);
+}catch(err){
+ return{
+  statusCode:400,
+  body:JSON.stringify({error:"Format JSON tidak valid"})
+ }
+}
 
 const table = body.table;
 const data = body.data;
