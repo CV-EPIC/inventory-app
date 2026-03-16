@@ -84,7 +84,7 @@ if(table === "harga_produk"){
 
 try{
 
-const res = await fetch("/.netlify/functions/importCSV",{
+const res = await fetch("/api/importCSV",{
  method:"POST",
  headers:{ "Content-Type":"application/json" },
  body:JSON.stringify({

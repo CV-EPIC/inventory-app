@@ -1,6 +1,6 @@
 import { Client } from "pg";
 
-exports.handler = async () => {
+export default async function handler(req,res){
 
 const client = new Client({
  connectionString:process.env.DATABASE_URL,
@@ -8,6 +8,8 @@ const client = new Client({
 });
 
 await client.connect();
+
+try{
 
 const result = await client.query(`
 SELECT
@@ -20,9 +22,12 @@ DATE_TRUNC('month',CURRENT_DATE)
 
 await client.end();
 
-return{
- statusCode:200,
- body:JSON.stringify(result.rows[0])
+res.status(200).json(result.rows[0]);
+
+}catch(err){
+
+res.status(500).json({error:err.message});
+
 }
 
-};
+}
