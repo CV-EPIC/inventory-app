@@ -1,19 +1,63 @@
 async function loadDashboard(){
 
-const el = document.getElementById("totalProduk");
+const cards = document.querySelectorAll(".kpi-card .value");
 
-if(!el){
- return; // jika bukan halaman dashboard
-}
+if(cards.length === 0) return;
 
-const res = await fetch("/.netlify/functions/kpiDashboard");
+try{
+
+const res = await fetch("/.netlify/functions/getPersediaan");
 const data = await res.json();
 
-document.getElementById("totalProduk").innerText = data.totalProduk || 0;
-document.getElementById("totalStok").innerText = data.totalStok || 0;
-document.getElementById("stokTipis").innerText = data.stokTipis || 0;
-document.getElementById("penjualanBulan").innerText = data.penjualan || 0;
+let totalProduk = data.length;
+let totalStok = 0;
+let hampirHabis = 0;
+
+data.forEach(row=>{
+
+totalStok += Number(row.stok);
+
+if(row.stok < 10){
+ hampirHabis++;
+}
+
+});
+
+cards[0].innerText = totalProduk;
+cards[1].innerText = totalStok;
+cards[2].innerText = hampirHabis;
+
+loadPenjualanBulanIni(cards);
+
+}catch(err){
+
+console.error(err);
 
 }
 
-setTimeout(loadDashboard,200);
+}
+
+
+
+async function loadPenjualanBulanIni(cards){
+
+try{
+
+const res = await fetch("/.netlify/functions/getPenjualanBulanIni");
+const data = await res.json();
+
+if(cards.length >= 4){
+ cards[3].innerText = data.total || 0;
+}
+
+}catch(err){
+
+console.log(err);
+
+}
+
+}
+
+
+
+document.addEventListener("DOMContentLoaded",loadDashboard);

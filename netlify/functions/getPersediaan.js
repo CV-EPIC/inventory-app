@@ -15,12 +15,12 @@ b.sku,
 b.nama_produk,
 b.stok_awal,
 
-COALESCE(SUM(pb.qty),0) as stok_masuk,
-COALESCE(SUM(pj.qty),0) as stok_keluar,
+COALESCE(SUM(pb.qty),0) AS stok_masuk,
+COALESCE(SUM(pj.qty),0) AS stok_keluar,
 
 b.stok_awal
 + COALESCE(SUM(pb.qty),0)
-- COALESCE(SUM(pj.qty),0) as stok
+- COALESCE(SUM(pj.qty),0) AS stok
 
 FROM barang b
 
@@ -35,7 +35,7 @@ b.sku,
 b.nama_produk,
 b.stok_awal
 
-ORDER BY b.nama_produk
+ORDER BY b.sku
 `);
 
 await client.end();
