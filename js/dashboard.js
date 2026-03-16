@@ -1,11 +1,13 @@
 async function loadKPI(){
 
-const res = await fetch('/.netlify/functions/kpiDashboard');
+const res = await fetch("/.netlify/functions/kpiDashboard");
 const data = await res.json();
 
-document.getElementById("sales").innerText = data.sales;
-document.getElementById("trx").innerText = data.transaksi;
-document.getElementById("qty").innerText = data.qty;
+document.getElementById("totalProduk").innerText = data.totalProduk;
+document.getElementById("totalStok").innerText = data.totalStok;
+document.getElementById("stokTipis").innerText = data.stokTipis;
+document.getElementById("penjualanBulan").innerText = data.penjualan;
+
 
 }
 
