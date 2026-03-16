@@ -7,6 +7,13 @@ const body = JSON.parse(event.body);
 const table = body.table;
 const data = body.data;
 
+if(!data || data.length === 0){
+ return{
+  statusCode:400,
+  body:JSON.stringify({error:"data kosong"})
+ }
+}
+
 const client = new Client({
  connectionString: process.env.DATABASE_URL,
  ssl:{ rejectUnauthorized:false }
