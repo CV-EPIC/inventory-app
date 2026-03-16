@@ -3,7 +3,9 @@ async function loadPersediaan(){
 const tbody = document.getElementById("bodyPersediaan");
 if(!tbody) return;
 
-const res = await fetch("/api/getPersediaan");
+const {bulan,tahun} = getFilter();
+
+const res = await fetch(`/api/getPersediaan?bulan=${bulan}&tahun=${tahun}`);
 const data = await res.json();
 
 tbody.innerHTML="";

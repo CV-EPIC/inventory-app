@@ -6,7 +6,9 @@ if(cards.length === 0) return;
 
 try{
 
-const res = await fetch("/api/getPersediaan");
+const {bulan,tahun} = getFilter();
+
+const res = await fetch(`/api/getPersediaan?bulan=${bulan}&tahun=${tahun}`);
 const data = await res.json();
 
 if(!Array.isArray(data)){
@@ -32,7 +34,7 @@ cards[0].innerText = totalProduk;
 cards[1].innerText = totalStok;
 cards[2].innerText = hampirHabis;
 
-const penjualan = await fetch("/api/getPenjualanBulanIni");
+const penjualan = await fetch(`/api/getPenjualanBulanIni?bulan=${bulan}&tahun=${tahun}`);
 const result = await penjualan.json();
 
 cards[3].innerText = result.total || 0;

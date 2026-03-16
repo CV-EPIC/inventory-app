@@ -19,7 +19,7 @@ lucide.createIcons();
 ============================ */
 
 async function loadPage(page){
-
+window.currentPage = page;
 try{
 
 const res = await fetch("pages/" + page + ".html");

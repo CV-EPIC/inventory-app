@@ -15,10 +15,9 @@ const result = await client.query(`
 SELECT
 COALESCE(SUM(qty),0) AS total
 FROM penjualan
-WHERE DATE_TRUNC('month',tanggal)
-=
-DATE_TRUNC('month',CURRENT_DATE)
-`);
+WHERE EXTRACT(MONTH FROM tanggal) = $1
+AND EXTRACT(YEAR FROM tanggal) = $2
+`,[bulan,tahun]);
 
 await client.end();
 
