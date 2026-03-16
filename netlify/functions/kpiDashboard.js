@@ -1,39 +1,53 @@
-const { Client } = require("pg");
+import { Client } from "pg";
 
 exports.handler = async () => {
 
 const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+ connectionString: process.env.DATABASE_URL,
+ ssl:{ rejectUnauthorized:false }
 });
 
-try {
+try{
 
-  await client.connect();
+await client.connect();
 
-  const result = await client.query(`
-    SELECT 
-      COALESCE(SUM(qty),0) as total_produk
-    FROM penjualan
-  `);
+const totalProduk = await client.query(`
+SELECT COUNT(*) FROM barang
+`);
 
-  await client.end();
+const totalStok = await client.query(`
+SELECT SUM(stok_awal) FROM barang
+`);
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      produk: result.rows[0].total_produk
-    })
-  };
+const stokTipis = await client.query(`
+SELECT COUNT(*) FROM barang WHERE stok_awal < 10
+`);
 
-} catch (err) {
+const penjualan = await client.query(`
+SELECT COALESCE(SUM(qty),0)
+FROM penjualan
+WHERE DATE_TRUNC('month',tanggal) = DATE_TRUNC('month',CURRENT_DATE)
+`);
 
-  return {
-    statusCode: 500,
-    body: JSON.stringify({
-      error: err.message
-    })
-  };
+await client.end();
+
+return{
+ statusCode:200,
+ body:JSON.stringify({
+  totalProduk: totalProduk.rows[0].count,
+  totalStok: totalStok.rows[0].sum,
+  stokTipis: stokTipis.rows[0].count,
+  penjualan: penjualan.rows[0].coalesce
+ })
+};
+
+}catch(err){
+
+return{
+ statusCode:500,
+ body:JSON.stringify({error:err.message})
+};
 
 }
+
 };

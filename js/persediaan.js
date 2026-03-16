@@ -1,9 +1,13 @@
 async function loadPersediaan(){
 
+const tbody = document.getElementById("bodyPersediaan");
+
+if(!tbody){
+ return; // jika halaman persediaan belum dimuat
+}
+
 const res = await fetch("/.netlify/functions/getBarang");
 const data = await res.json();
-
-const tbody = document.getElementById("bodyPersediaan");
 
 tbody.innerHTML = "";
 
@@ -29,4 +33,4 @@ tbody.innerHTML += `
 
 }
 
-loadPersediaan();
+setTimeout(loadPersediaan,200);

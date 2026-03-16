@@ -36,6 +36,15 @@ reader.onload = async function(e){
  }
 }
 
+if(table === "pembelian"){
+ return{
+  tanggal:c[0],
+  no_po:c[1],
+  sku:c[2],
+  qty:c[3]
+ }
+}
+
  if(table === "penjualan"){
  return{
   tanggal:c[0],
@@ -98,6 +107,9 @@ if(table === "penjualan"){
 
 if(table === "harga_produk"){
  csv = "sku,harga\n"
+}
+if(table === "pembelian"){
+ csv = "tanggal,no_po,sku,qty\n"
 }
 
 const blob = new Blob([csv],{type:"text/csv"})

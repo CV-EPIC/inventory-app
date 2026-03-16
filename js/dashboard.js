@@ -1,14 +1,19 @@
-async function loadKPI(){
+async function loadDashboard(){
+
+const totalProduk = document.getElementById("totalProduk");
+
+if(!totalProduk){
+ return; // jika bukan halaman dashboard
+}
 
 const res = await fetch("/.netlify/functions/kpiDashboard");
 const data = await res.json();
 
-document.getElementById("totalProduk").innerText = data.totalProduk;
-document.getElementById("totalStok").innerText = data.totalStok;
-document.getElementById("stokTipis").innerText = data.stokTipis;
-document.getElementById("penjualanBulan").innerText = data.penjualan;
-
+document.getElementById("totalProduk").innerText = data.totalProduk || 0;
+document.getElementById("totalStok").innerText = data.totalStok || 0;
+document.getElementById("stokTipis").innerText = data.stokTipis || 0;
+document.getElementById("penjualanBulan").innerText = data.penjualan || 0;
 
 }
 
-loadKPI();
+setTimeout(loadDashboard,200);
