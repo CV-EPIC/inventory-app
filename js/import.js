@@ -1,43 +1,45 @@
 async function importCSV(){
 
-const file = document.getElementById("csvFile").files[0];
+const file = document.getElementById("csvfile").files[0];
+const table = document.getElementById("table").value;
 
 if(!file){
-alert("Pilih file CSV dulu");
-return;
+ alert("Pilih CSV dulu");
+ return;
 }
 
 const reader = new FileReader();
 
 reader.onload = async function(e){
 
-const rows = e.target.result
-.split("\n")
-.slice(1)
-.filter(r => r.trim() !== "");
+ const rows = e.target.result
+   .split("\n")
+   .slice(1)
+   .filter(r => r.trim() !== "");
 
-const data = rows.map(r=>{
-const c = r.split(",").map(v => v.trim());
+ const data = rows.map(r=>{
+  const c = r.split(",").map(v=>v.trim());
 
-return{
-tanggal:c[0],
-no_po:c[1],
-outlet:c[2],
-sku:c[5],        // SKU ada di kolom ke 6
-qty:parseInt(c[4])
-}
+  return{
+   col1:c[0],
+   col2:c[1],
+   col3:c[2],
+   col4:c[3],
+   col5:c[4]
+  }
 
-});
+ });
 
-await fetch("/.netlify/functions/importPenjualan",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify(data)
-});
+ await fetch("/.netlify/functions/importCSV",{
+  method:"POST",
+  headers:{ "Content-Type":"application/json" },
+  body:JSON.stringify({
+   table:table,
+   data:data
+  })
+ });
 
-alert("Import selesai");
+ alert("Import selesai");
 
 };
 
