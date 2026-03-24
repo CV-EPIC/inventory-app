@@ -1,51 +1,29 @@
-import { Client } from "pg";
+export default async function handler(req, res) {
+  try {
+    const { month, year } = req.query;
 
-export default async function handler(req,res){
+    const SHEET_ID = process.env.SHEET_ID;
+    const API_KEY = process.env.API_KEY;
 
-const bulan = req.query.bulan || new Date().getMonth()+1;
-const tahun = req.query.tahun || new Date().getFullYear();
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/PENJUALAN!A:F?key=${API_KEY}`;
 
-const client = new Client({
- connectionString:process.env.DATABASE_URL,
- ssl:{rejectUnauthorized:false}
-});
+    const response = await fetch(url);
+    const data = await response.json();
 
-await client.connect();
+    const rows = data.values.slice(1);
 
-const result = await client.query(`
-SELECT
-b.sku,
-b.nama_produk,
-b.stok_awal,
+    const filtered = rows.filter(row => {
+      const tgl = new Date(row[0]);
 
-COALESCE(SUM(pb.qty),0) AS stok_masuk,
-COALESCE(SUM(pj.qty),0) AS stok_keluar,
+      return (
+        tgl.getMonth() + 1 == month &&
+        tgl.getFullYear() == year
+      );
+    });
 
-b.stok_awal
-+ COALESCE(SUM(pb.qty),0)
-- COALESCE(SUM(pj.qty),0) AS stok
+    res.status(200).json(filtered);
 
-FROM barang b
-
-LEFT JOIN pembelian pb
-ON pb.sku=b.sku
-AND EXTRACT(MONTH FROM pb.tanggal)=$1
-AND EXTRACT(YEAR FROM pb.tanggal)=$2
-
-LEFT JOIN penjualan pj
-ON pj.sku=b.sku
-AND EXTRACT(MONTH FROM pj.tanggal)=$1
-AND EXTRACT(YEAR FROM pj.tanggal)=$2
-
-GROUP BY
-b.sku,
-b.nama_produk,
-b.stok_awal
-ORDER BY b.sku
-`,[bulan,tahun]);
-
-await client.end();
-
-res.status(200).json(result.rows);
-
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 }
