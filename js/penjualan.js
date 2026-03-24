@@ -25,7 +25,12 @@ async function loadPenjualan() {
 
     data.forEach(row => {
 
-      const [tgl, no, outlet, produk, qty, sku] = row;
+      const tgl = row.tanggal;
+    const no = row.no;
+    const outlet = row.outlet;
+    const produk = row.produk;
+    const qty = row.qty;
+    const sku = row.sku;
 
       const qtyNum = Number(qty || 0);
 
