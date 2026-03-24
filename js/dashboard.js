@@ -1,46 +1,25 @@
-async function loadDashboard(){
+async function loadPenjualan() {
+  const bulan = document.getElementById("bulan").value;
+  const tahun = document.getElementById("tahun").value;
 
-const cards = document.querySelectorAll(".kpi-card .value");
+  const res = await fetch(`/api/getPenjualanBulanIni?month=${bulan}&year=${tahun}`);
+  const data = await res.json();
 
-if(cards.length === 0) return;
+  const tbody = document.querySelector("#tablePenjualan tbody");
+  tbody.innerHTML = "";
 
-try{
+  data.forEach(row => {
+    const tr = document.createElement("tr");
 
-const {bulan,tahun} = getFilter();
+    tr.innerHTML = `
+      <td>${row[0]}</td>
+      <td>${row[1]}</td>
+      <td>${row[2]}</td>
+      <td>${row[3]}</td>
+      <td>${row[4]}</td>
+      <td>${row[5]}</td>
+    `;
 
-const res = await fetch(`/api/getPersediaan?bulan=${bulan}&tahun=${tahun}`);
-const data = await res.json();
-
-if(!Array.isArray(data)){
- console.error("API bukan array",data);
- return;
-}
-
-let totalProduk = data.length;
-let totalStok = 0;
-let hampirHabis = 0;
-
-data.forEach(r=>{
-
-totalStok += Number(r.stok);
-
-if(Number(r.stok) < 10){
- hampirHabis++;
-}
-
-});
-
-cards[0].innerText = totalProduk;
-cards[1].innerText = totalStok;
-cards[2].innerText = hampirHabis;
-
-const penjualan = await fetch(`/api/getPenjualanBulanIni?bulan=${bulan}&tahun=${tahun}`);
-const result = await penjualan.json();
-
-cards[3].innerText = result.total || 0;
-
-}catch(err){
-console.error(err);
-}
-
+    tbody.appendChild(tr);
+  });
 }
