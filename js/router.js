@@ -35,16 +35,18 @@ async function loadTopbar() {
 async function loadPage(page) {
   console.log("LOAD PAGE:", page);
 
+  window.currentPage = page; // 🔥 penting untuk filter global
+
   try {
     const res = await fetch(`/pages/${page}.html`);
     if (!res.ok) throw new Error("Page not found");
 
     const html = await res.text();
 
-    // inject content dulu
+    // inject content
     document.getElementById("content").innerHTML = html;
 
-    // jalankan script khusus page
+    // jalankan script khusus halaman
     runPageScript(page);
 
     // set menu aktif
@@ -64,6 +66,8 @@ async function loadPage(page) {
 
 function runPageScript(page) {
 
+  console.log("RUN SCRIPT:", page);
+
   if (page === "dashboard" && typeof loadDashboard === "function") {
     loadDashboard();
   }
@@ -72,8 +76,26 @@ function runPageScript(page) {
     loadPersediaan();
   }
 
-  // nanti bisa tambah:
-  // if (page === "penjualan") loadPenjualan();
+  if (page === "penjualan" && typeof loadPenjualan === "function") {
+    loadPenjualan();
+  }
+
+  if (page === "pembelian" && typeof loadPembelian === "function") {
+    loadPembelian();
+  }
+
+  if (page === "forecast" && typeof loadForecast === "function") {
+    loadForecast();
+  }
+
+  if (page === "opname" && typeof loadOpname === "function") {
+    loadOpname();
+  }
+
+  if (page === "import" && typeof loadImport === "function") {
+    loadImport();
+  }
+
 }
 
 // ============================
@@ -99,6 +121,12 @@ function setActiveMenu(page) {
 async function startApp() {
   await loadSidebar();
   await loadTopbar();
+  initGlobalSearch(); // 🔥 aktifkan search
+
+  // 🔥 init setelah topbar ada (karena filter ada di topbar)
+  if (typeof initFilterGlobal === "function") {
+    initFilterGlobal();
+  }
 
   loadPage("dashboard");
 }

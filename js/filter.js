@@ -1,36 +1,19 @@
-function getFilter(){
+function initFilterGlobal() {
+  const bulan = document.getElementById("filterBulan");
+  const tahun = document.getElementById("filterTahun");
 
-const bulan = document.getElementById("filterBulan")?.value;
-const tahun = document.getElementById("filterTahun")?.value;
+  if (!bulan || !tahun) return;
 
-return {bulan,tahun};
-
+  bulan.addEventListener("change", triggerReload);
+  tahun.addEventListener("change", triggerReload);
 }
 
-function onFilterChange(){
+function triggerReload() {
+  if (window.currentPage === "dashboard") {
+    loadDashboard();
+  }
 
-const page = window.currentPage;
-
-if(page === "dashboard"){
- loadDashboard();
+  if (window.currentPage === "persediaan") {
+    loadPersediaan();
+  }
 }
-
-if(page === "persediaan"){
- loadPersediaan();
-}
-
-if(page === "penjualan"){
- loadPenjualan();
-}
-
-}
-
-document.addEventListener("DOMContentLoaded",()=>{
-
-document.getElementById("filterBulan")
-?.addEventListener("change",onFilterChange);
-
-document.getElementById("filterTahun")
-?.addEventListener("change",onFilterChange);
-
-});

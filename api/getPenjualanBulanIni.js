@@ -10,8 +10,13 @@ export default async function handler(req, res) {
     const response = await fetch(url);
     const data = await response.json();
 
+    if (!data.values) {
+      return res.status(200).json([]);
+    }
+
     const rows = data.values.slice(1);
 
+    // FILTER BULAN
     const filtered = rows.filter(row => {
       const tgl = new Date(row[0]);
 
@@ -21,7 +26,19 @@ export default async function handler(req, res) {
       );
     });
 
-    res.status(200).json(filtered);
+    // FORMAT DATA (BIAR FRONTEND ENAK)
+    const result = filtered.map(row => {
+      return {
+        tanggal: row[0],
+        no: row[1],
+        outlet: row[2],
+        produk: row[3],
+        qty: Number(row[4] || 0),
+        sku: row[5]
+      };
+    });
+
+    res.status(200).json(result);
 
   } catch (error) {
     res.status(500).json({ error: error.message });

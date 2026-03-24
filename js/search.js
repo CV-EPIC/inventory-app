@@ -1,17 +1,21 @@
-document.addEventListener("input", function(e){
+function initGlobalSearch() {
+  const input = document.getElementById("globalSearch");
 
-if(e.target.id !== "globalSearch") return;
+  if (!input) return;
 
-const keyword = e.target.value.toLowerCase();
+  input.addEventListener("keyup", function () {
 
-const rows = document.querySelectorAll("table tbody tr");
+    const value = this.value;
 
-rows.forEach(row=>{
+    // PENJUALAN
+    if ($.fn.DataTable.isDataTable('#tablePenjualan')) {
+      $('#tablePenjualan').DataTable().search(value).draw();
+    }
 
-const text = row.innerText.toLowerCase();
+    // PERSEDIAAN (nanti)
+    if ($.fn.DataTable.isDataTable('#tablePersediaan')) {
+      $('#tablePersediaan').DataTable().search(value).draw();
+    }
 
-row.style.display = text.includes(keyword) ? "" : "none";
-
-});
-
-});
+  });
+}
