@@ -1,32 +1,29 @@
-import { Client } from "pg";
+export default async function handler(req, res) {
+  try {
+    const { month, year } = req.query;
 
-export default async function handler(req,res){
+    const SHEET_ID = process.env.SHEET_ID;
+    const API_KEY = process.env.API_KEY;
 
-const client = new Client({
- connectionString:process.env.DATABASE_URL,
- ssl:{rejectUnauthorized:false}
-});
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/PENJUALAN!A:F?key=${API_KEY}`;
 
-await client.connect();
+    const response = await fetch(url);
+    const data = await response.json();
 
-try{
+    const rows = data.values.slice(1);
 
-const result = await client.query(`
-SELECT
-COALESCE(SUM(qty),0) AS total
-FROM penjualan
-WHERE EXTRACT(MONTH FROM tanggal) = $1
-AND EXTRACT(YEAR FROM tanggal) = $2
-`,[bulan,tahun]);
+    const filtered = rows.filter(row => {
+      const tgl = new Date(row[0]);
 
-await client.end();
+      return (
+        tgl.getMonth() + 1 == month &&
+        tgl.getFullYear() == year
+      );
+    });
 
-res.status(200).json(result.rows[0]);
+    res.status(200).json(filtered);
 
-}catch(err){
-
-res.status(500).json({error:err.message});
-
-}
-
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 }
