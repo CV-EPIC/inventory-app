@@ -1,106 +1,106 @@
-/* ============================
-   ROUTER SYSTEM
-============================ */
+// ============================
+// LOAD COMPONENT
+// ============================
 
-async function loadSidebar(){
+async function loadSidebar() {
+  try {
+    const res = await fetch("/components/sidebar.html");
+    if (!res.ok) throw new Error("Sidebar not found");
 
-const res = await fetch("components/sidebar.html");
-const html = await res.text();
+    const html = await res.text();
+    document.getElementById("sidebar").innerHTML = html;
 
-document.getElementById("sidebar").innerHTML = html;
-
-lucide.createIcons();
-
+  } catch (err) {
+    console.error("Sidebar error:", err);
+  }
 }
 
+async function loadTopbar() {
+  try {
+    const res = await fetch("/components/topbar.html");
+    if (!res.ok) throw new Error("Topbar not found");
 
-/* ============================
-   LOAD PAGE
-============================ */
+    const html = await res.text();
+    document.getElementById("topbar").innerHTML = html;
 
-async function loadPage(page){
-window.currentPage = page;
-try{
-
-const res = await fetch("pages/" + page + ".html");
-
-if(!res.ok){
-throw new Error("Page not found");
+  } catch (err) {
+    console.error("Topbar error:", err);
+  }
 }
 
-const html = await res.text();
+// ============================
+// LOAD PAGE
+// ============================
 
-document.getElementById("content").innerHTML = html;
-if(page === "dashboard"){
- loadDashboard();
+async function loadPage(page) {
+  console.log("LOAD PAGE:", page);
+
+  try {
+    const res = await fetch(`/pages/${page}.html`);
+    if (!res.ok) throw new Error("Page not found");
+
+    const html = await res.text();
+
+    // inject content dulu
+    document.getElementById("content").innerHTML = html;
+
+    // jalankan script khusus page
+    runPageScript(page);
+
+    // set menu aktif
+    setActiveMenu(page);
+
+  } catch (err) {
+    console.error("Page load error:", err);
+
+    document.getElementById("content").innerHTML =
+      "<h2 style='padding:20px'>Page tidak ditemukan</h2>";
+  }
 }
 
-if(page === "persediaan"){
- loadPersediaan();
-}
-lucide.createIcons();
+// ============================
+// HANDLE SCRIPT PER PAGE
+// ============================
 
-setActiveMenu(page);
+function runPageScript(page) {
 
-}catch(err){
+  if (page === "dashboard" && typeof loadDashboard === "function") {
+    loadDashboard();
+  }
 
-document.getElementById("content").innerHTML =
-"<h2 style='padding:20px'>Page tidak ditemukan</h2>";
+  if (page === "persediaan" && typeof loadPersediaan === "function") {
+    loadPersediaan();
+  }
 
-}
-
-}
-
-/* ============================
-   START APP
-============================ */
-
-async function startApp(){
-
-await loadSidebar()
-
-await loadTopbar()
-
-loadPage("dashboard")
-
+  // nanti bisa tambah:
+  // if (page === "penjualan") loadPenjualan();
 }
 
-startApp()
-console.log("APP START");
+// ============================
+// ACTIVE MENU
+// ============================
 
-/* ============================
-   TOP BAR
-============================ */
-async function loadTopbar(){
+function setActiveMenu(page) {
+  const menus = document.querySelectorAll(".sidebar li");
 
-const res = await fetch("components/topbar.html");
+  menus.forEach(menu => {
+    menu.classList.remove("active");
 
-const html = await res.text();
-
-document.getElementById("topbar").innerHTML = html;
-
-lucide.createIcons();
-
+    if (menu.dataset.page === page) {
+      menu.classList.add("active");
+    }
+  });
 }
 
-/* ============================
-   MENU AKTIF
-============================ */
+// ============================
+// START APP
+// ============================
 
-function setActiveMenu(page){
+async function startApp() {
+  await loadSidebar();
+  await loadTopbar();
 
-const menus = document.querySelectorAll(".sidebar li")
-
-menus.forEach(menu=>{
-
-menu.classList.remove("active")
-
-if(menu.dataset.page === page){
-
-menu.classList.add("active")
-
+  loadPage("dashboard");
 }
 
-})
-
-}
+startApp();

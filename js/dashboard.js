@@ -1,25 +1,22 @@
-async function loadPenjualan() {
-  const bulan = document.getElementById("bulan").value;
-  const tahun = document.getElementById("tahun").value;
+async function loadDashboard() {
+  try {
 
-  const res = await fetch(`/api/getPenjualanBulanIni?month=${bulan}&year=${tahun}`);
-  const data = await res.json();
+    // ambil filter global (dari index nanti)
+    const bulan = document.getElementById("filterBulan")?.value || 1;
+    const tahun = document.getElementById("filterTahun")?.value || 2026;
 
-  const tbody = document.querySelector("#tablePenjualan tbody");
-  tbody.innerHTML = "";
+    const res = await fetch(`https://inventory-app-cyan-theta.vercel.app/api/getPenjualanBulanIni?month=${bulan}&year=${tahun}`);
+    const data = await res.json();
 
-  data.forEach(row => {
-    const tr = document.createElement("tr");
+    let total = 0;
 
-    tr.innerHTML = `
-      <td>${row[0]}</td>
-      <td>${row[1]}</td>
-      <td>${row[2]}</td>
-      <td>${row[3]}</td>
-      <td>${row[4]}</td>
-      <td>${row[5]}</td>
-    `;
+    data.forEach(row => {
+      total += Number(row[4] || 0); // qty
+    });
 
-    tbody.appendChild(tr);
-  });
+    document.getElementById("totalPenjualan").innerText = total;
+
+  } catch (err) {
+    console.error("Dashboard error:", err);
+  }
 }
